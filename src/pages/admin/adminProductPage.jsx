@@ -7,6 +7,9 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader } from "../../components/loader";
 
+// derive API base URL for static files (strip trailing /api if present)
+const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/api\/?$/, "");
+
 function ProductDeleteConfirm(props){	
 	const productID = props.productID;
 	const close = props.close;
@@ -48,27 +51,26 @@ function ProductDeleteConfirm(props){
 	</div>)
 }
 
+
 export default function AdminProductPage() {
 	const [products, setProducts] = useState([]);
 	const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 	const [productToDelete, setProductToDelete]= useState(null);
 	const [isLoading, setIsLoading] = useState(true)
-
+    console.log(products);
 	const navigate = useNavigate()
 
-	useEffect(() => {
-		if(isLoading){
-			axios
-			.get(import.meta.env.VITE_API_URL + "/api/products")
-			.then((response) => {
-				console.log(response.data);
-				setProducts(response.data);
-				setIsLoading(false);
-			});
-		}		
-	}, [isLoading]);
-
-
+		useEffect(() => {
+             if(isLoading){
+                 axios
+                 .get(import.meta.env.VITE_API_URL + "/api/products")
+                 .then((response) => {
+                     console.log(response.data);
+                     setProducts(response.data);
+                     setIsLoading(false);
+                 });
+             }		
+         }, [isLoading]);
 
 	return (
 		<div className="w-full min-h-full">
@@ -132,8 +134,19 @@ export default function AdminProductPage() {
 										>
 											<td className="px-4 py-3">
 												<img
-													src={item.images?.[0]}
-													alt={item.name}
+													src={
+														(item.images?.[0] &&
+															(item.images[0].startsWith("http")
+																? item.images[0]
+																: API_BASE + item.images[0])) ||
+														"https://via.placeholder.com/64?text=No+Image"
+													}
+													alt={item.name || "Product image"}
+													onError={(e) => {
+														e.currentTarget.onerror = null;
+														e.currentTarget.src = "https://via.placeholder.com/64?text=No+Image";
+													}}
+													loading="lazy"
 													className="h-16 w-16 rounded-lg object-cover ring-1 ring-secondary/15"
 												/>
 											</td>
@@ -208,4 +221,6 @@ export default function AdminProductPage() {
 			</div>
 		</div>
 	);
+
+
 }

@@ -12,11 +12,12 @@ export default function AddProductPage() {
 	const [images, setImages] = useState([]);
 	const [price, setPrice] = useState(0);
 	const [labelledPrice, setLabelledPrice] = useState(0);
-	const [category, setCategory] = useState("cream");
+	const [category, setCategory] = useState("");
 	const [stock, setStock] = useState(0);
 	const navigate = useNavigate();
 
 	async function addProduct() {
+
 		const token = localStorage.getItem("token");
 		if (token == null) {
 			navigate("/login");
@@ -44,17 +45,18 @@ export default function AddProductPage() {
 				stock : stock
 			}
 
-			await axios.post(import.meta.env.VITE_API_URL+"/api/products",product,{
-				headers:{
-					Authorization : "Bearer "+token
-				}
-			})
+				await axios.post(import.meta.env.VITE_API_URL+"/api/products",product,{
+					headers:{
+						Authorization : "Bearer "+token
+					}
+				})
 			toast.success("Product added successfully");
 			navigate("/admin/products");
 
-		} catch {
-			toast.error("An error occurred");
-		}
+		}catch (err) {
+   		 	//console.error("Add product error:", err.response || err.message);
+    		toast.error("An error occurred: " + (err.response?.data?.message || err.message));
+  }
 
 	}
 
@@ -193,9 +195,21 @@ export default function AddProductPage() {
 								}}
 								className="h-11 rounded-xl border border-secondary/20 bg-white px-3 text-secondary outline-none focus:border-accent focus:ring-4 focus:ring-accent/20 transition"
 							>
-								<option value="cream">Cream</option>
-								<option value="lotion">Lotion</option>
-								<option value="serum">Serum</option>
+								<option value="Cream">Cream</option>
+								<option value="Lotion">Lotion</option>
+								<option value="Serum">Serum</option>
+								<option value="Keyboard">Keyboard</option>
+								<option value="Mouse">Mouse</option>
+								<option value="Motherboard">Motherboard</option>
+								<option value="Grapics card">Grapics Card</option>
+								<option value="Gaming case">Gaming Case</option>
+								<option value="Pc pribild">PC Pre Bilde</option>
+								<option value="Cooler">Cooler</option>
+								<option value="Power Supply">Power Supply</option>
+								<option value="CPU">CPU</option>
+								<option value="Ram">Ram</option>
+								<option value="Storage">Storage</option>
+
 							</select>
 						</label>
 

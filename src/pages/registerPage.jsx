@@ -1,41 +1,48 @@
+
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
+	
+	const [firstName, setfirstName] = useState("");
+	const [lastName, setlastName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-    const[firstName, setFirstName] = useState("");
-    const[lastName, setLastName] = useState("");
-    const[confirmPassword, setConfirmPassword] = useState("");
-    const navigate = useNavigate()
+	const [confirmPassword, setConfirmPassword] = useState("");
 
-	async function register() {
-        if(password !== confirmPassword){
-            toast.error("Passwords do not match");
-            return;
-        }
+	const navigate = useNavigate()
+
+	async function Register() {
+		if(password !== confirmPassword){
+			toast.error("Passwords do not match");
+			return;
+		}
 		try {
-			await axios.post(
+			const response = await axios.post(
 				import.meta.env.VITE_API_URL + "/api/users/",
 				{ 
-                    email : email,
-                    password : password, 
-                    firstName : firstName,
-                    lastName : lastName
-                }
+					firstName: firstName,
+					lastName: lastName,
+					email : email, 
+					password : password
+				
+				}
 			);
-            
-            toast.success("Registration successful! Please login.");
-            navigate("/login");
 
+			toast.success("Registration successful! Please log in.");
+			navigate("/login");
+
+				
 		} catch (e) {
-			console.error("Login failed:", e);
-            //alert("Login failed. Please check your credentials.");
-            toast.error("Login failed. Please check your credentials.");
+			console.error("Register failed:", e);
+			//alert("Login failed. Please check your credentials.");
+			toast.error("Register failed. Please check your credentials.");
 		}
 	}
+
 
 	return (
 		<div className="min-h-screen w-full relative flex items-stretch">
@@ -47,19 +54,58 @@ export default function RegisterPage() {
 
 			{/* Layout */}
 			<div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 w-full">
-                <div className="flex items-center justify-center p-6 sm:p-10">
+				{/* Right side form */}
+				<div className="flex items-center justify-center p-6 sm:p-10">
 					<div className="w-full max-w-md">
 						<div className="rounded-3xl backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl p-8 sm:p-10">
 							<div className="mb-8 flex flex-col items-center text-center">
 								<img
 									src="/logo.png"
-									alt="CBC Logo"
+									alt="Alipres Logo"
 									className="h-12 w-auto mb-4"
 								/>
-						
+								<h2 className="text-2xl font-semibold text-white">
+									Welcome back to Alipres
+								</h2>
+								<p className="text-primary/90 text-sm">
+									Log in to continue your beauty journey and checkout faster.
+								</p>
 							</div>
 
 							<div className="space-y-5">
+								
+								<div className="space-y-2">
+									<label
+										htmlFor="firstName"
+										className="text-sm font-medium text-primary/90"
+									>
+										First Name
+									</label>
+									<input
+										id="firstName"
+										type="text"
+										placeholder="e.g., John"
+										autoComplete="email"
+										onChange={(e) => setfirstName(e.target.value)}
+										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
+									/>
+								</div>
+								<div className="space-y-2">
+									<label
+										htmlFor="lastName"
+										className="text-sm font-medium text-primary/90"
+									>
+										Last Name
+									</label>
+									<input
+										id="lastName"
+										type="text"
+										placeholder="e.g., Doe"
+										autoComplete="email"
+										onChange={(e) => setlastName(e.target.value)}
+										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
+									/>
+								</div>
 								<div className="space-y-2">
 									<label
 										htmlFor="email"
@@ -73,38 +119,6 @@ export default function RegisterPage() {
 										placeholder="e.g., you@example.com"
 										autoComplete="email"
 										onChange={(e) => setEmail(e.target.value)}
-										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
-									/>
-								</div>
-                                <div className="space-y-2">
-									<label
-										htmlFor="firstName"
-										className="text-sm font-medium text-primary/90"
-									>
-										First Name
-									</label>
-									<input
-										id="firstName"
-										type="text"
-										placeholder="e.g., John"
-										autoComplete="given-name"
-										onChange={(e) => setFirstName(e.target.value)}
-										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
-									/>
-								</div>
-                                <div className="space-y-2">
-									<label
-										htmlFor="lastName"
-										className="text-sm font-medium text-primary/90"
-									>
-										Last Name
-									</label>
-									<input
-										id="lastName"
-										type="text"
-										placeholder="e.g., Doe"
-										autoComplete="family_name"
-										onChange={(e) => setLastName(e.target.value)}
 										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
 									/>
 								</div>
@@ -125,7 +139,7 @@ export default function RegisterPage() {
 										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
 									/>
 								</div>
-                                	<div className="space-y-2">
+								<div className="space-y-2">
 									<label
 										htmlFor="confirmPassword"
 										className="text-sm font-medium text-primary/90"
@@ -133,21 +147,23 @@ export default function RegisterPage() {
 										Confirm Password
 									</label>
 									<input
-										id="confirmPassword"										
+										id="confirmPassword"
 										type="password"
-										placeholder="Enter your password"
+										placeholder="Re-enter your password"
 										autoComplete="current-password"
-										onChange={(e) => setConfirmPassword(e.target.value)}
+										onChange={(e) => setConfirmPassword  (e.target.value)}
 										className="w-full h-11 rounded-xl bg-white/90 text-secondary placeholder-secondary/50 px-4 outline-none ring-2 ring-transparent focus:ring-accent/60 transition"
 									/>
 								</div>
 
+
 								<button
-									onClick={register}
+									onClick={Register}
 									className="w-full h-11 rounded-xl bg-accent text-white font-semibold shadow-lg shadow-accent/20 hover:brightness-110 active:scale-[0.99] transition"
 								>
 									Register
 								</button>
+								
 							</div>
 
 							<div className="mt-8">
@@ -159,7 +175,7 @@ export default function RegisterPage() {
 							</div>
 
 							<div className="mt-6 text-center text-sm text-primary/90">
-								Already have and account?{" "}
+								Already have and acount?{" "}
 								<Link
 									to="/login"
 									className="text-accent hover:underline underline-offset-4"
@@ -171,7 +187,7 @@ export default function RegisterPage() {
 
 						{/* Small footer for mobile */}
 						<p className="mt-6 text-center text-primary/80 text-xs lg:hidden">
-							© {new Date().getFullYear()} CBC – Crystal Beauty Clear
+							© {new Date().getFullYear()} Alipres – Best Computer & Gaming Store
 						</p>
 					</div>
 				</div>
@@ -180,34 +196,33 @@ export default function RegisterPage() {
 					<div className="flex items-center gap-4">
 						<img
 							src="/logo.png"
-							alt="CBC - Crystal Beauty Clear"
+							alt="Alipres - Best Computer & Gaming Store"
 							className="h-10 w-auto"
 						/>
 						<span className="text-primary/90 tracking-wide font-semibold">
-							CBC • Crystal Beauty Clear
+							Alipres • Best Computer & Gaming Store
 						</span>
 					</div>
 
 					<div className="flex-1 flex items-center">
 						<div className="max-w-xl space-y-6">
 							<h1 className="text-5xl font-bold leading-tight text-white drop-shadow">
-								Glow on. <span className="text-accent">Shop on.</span>
+								Best in. <span className="text-accent">ONE Place.</span>
 							</h1>
 							<p className="text-primary/90 text-lg">
 								Register to explore exclusive offers, track your orders, and save
-								your favorite beauty picks. Beautiful shopping—made simple.
+								your Gaming Race. best place to start you Journy.
 							</p>
 							<div className="h-1 w-28 bg-accent rounded-full" />
 						</div>
 					</div>
 
 					<p className="text-primary/80 text-sm">
-						© {new Date().getFullYear()} CBC – Crystal Beauty Clear. All rights
+						© {new Date().getFullYear()} Alipres – Best Computer & Gaming Store. All rights
 						reserved.
 					</p>
 				</div>
 
-				{/* Right side form */}
 				
 			</div>
 		</div>
