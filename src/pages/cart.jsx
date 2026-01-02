@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CiCircleChevDown, CiCircleChevUp } from "react-icons/ci";
 import { BiTrash } from "react-icons/bi";
@@ -6,7 +6,12 @@ import { BiTrash } from "react-icons/bi";
 import { addToCart, getTotal, loadCart } from "../utils/cart";
 
 export default function CartPage() {
-  const [cart, setCart] = useState(loadCart());
+  const [cart, setCart] = useState([]);
+
+  // Load cart on mount
+  useEffect(() => {
+    setCart(loadCart());
+  }, []);
 
   // Helpers
   const updateCart = (item, qty) => {
@@ -16,58 +21,74 @@ export default function CartPage() {
 
   const removeItem = (item) => updateCart(item, -item.quantity);
 
+  if (cart.length === 0)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-primary text-white text-center">
+        <div>
+          <h1 className="text-2xl font-bold">🛒 Your cart is empty</h1>
+          <p className="mt-2">Add some products to checkout</p>
+          <Link
+            to="/"
+            className="mt-4 inline-block bg-accent px-6 py-3 rounded-lg hover:bg-accent/80"
+          >
+            Browse Products
+          </Link>
+        </div>
+      </div>
+    );
+
   return (
-    <div className="w-full lg:h-[calc(100vh-100px)] bg-primary flex flex-col pt-[25px] items-center">
-      <div className="w-[400px] lg:w-[600px] flex flex-col gap-4">
-        
+    <div className="w-full min-h-screen bg-primary flex flex-col pt-6 items-center px-4">
+      <div className="w-full max-w-4xl flex flex-col gap-4">
+
         {/* Cart Items */}
         {cart.map((item, index) => (
           <div
             key={index}
-            className="w-full h-[300px] lg:h-[120px] bg-white flex flex-col lg:flex-row relative items-center p-3 lg:p-0"
+            className="w-full bg-white flex flex-col lg:flex-row relative items-center p-3 rounded-lg shadow-md"
           >
             {/* Remove Button */}
             <button
               onClick={() => removeItem(item)}
-              className="absolute right-[-40px] text-2xl text-red-500 rounded-full aspect-square hover:bg-red-500 hover:text-white p-[5px] font-bold"
+              className="absolute top-2 right-2 text-red-500 hover:bg-red-500 hover:text-white rounded-full p-1"
             >
-              <BiTrash />
+              <BiTrash size={20} />
             </button>
 
             {/* Image */}
             <img
               src={item.image}
               alt={item.name}
-              className="h-[100px] lg:h-full aspect-square object-cover"
+              className="h-28 w-28 object-cover rounded-lg"
             />
 
             {/* Info */}
-            <div className="w-full lg:w-[200px] h-[100px] lg:h-full flex flex-col pl-[5px] pt-[10px] text-center lg:text-left">
+            <div className="flex-1 flex flex-col justify-center ml-4">
               <h1 className="font-semibold text-lg">{item.name}</h1>
               <span className="text-sm text-secondary">{item.productID}</span>
             </div>
 
             {/* Quantity Controls */}
-            <div className="w-[100px] h-full flex flex-row lg:flex-col justify-center items-center">
+            <div className="flex items-center gap-2 ml-4">
               <CiCircleChevUp
-                className="text-3xl cursor-pointer"
+                className="text-2xl cursor-pointer"
                 onClick={() => updateCart(item, 1)}
               />
-              <span className="font-semibold text-4xl">{item.quantity}</span>
+              <span className="font-semibold text-xl">{item.quantity}</span>
               <CiCircleChevDown
-                className="text-3xl cursor-pointer"
+                className="text-2xl cursor-pointer"
                 onClick={() => updateCart(item, -1)}
               />
             </div>
 
             {/* Price */}
-            <div className="w-full lg:w-[180px] lg:h-full flex flex-row lg:flex-col items-center justify-center">
+            <div className="ml-4 flex flex-col items-end">
               {item.labelledPrice > item.price && (
-                <span className="text-secondary text-lg line-through lg:w-full text-center lg:text-right pr-[10px] lg:mt-[20px]">
+                <span className="line-through text-gray-400">
                   LKR {item.labelledPrice.toFixed(2)}
                 </span>
               )}
-              <span className="font-semibold text-accent text-2xl lg:w-full text-center lg:text-right pr-[10px] lg:mt-[5px]">
+              <span className="font-bold text-accent text-lg">
                 LKR {item.price.toFixed(2)}
               </span>
             </div>
@@ -75,19 +96,18 @@ export default function CartPage() {
         ))}
 
         {/* Checkout Section */}
-        <div className="w-full h-[120px] bg-white flex flex-col-reverse lg:flex-row justify-end items-center relative">
+        <div className="w-full bg-white p-4 rounded-lg shadow-md flex flex-col lg:flex-row justify-between items-center mt-4">
+          <span className="font-bold text-accent text-xl">
+            Total: LKR {getTotal().toFixed(2)}
+          </span>
+
           <Link
             to="/checkout"
-            state={cart}
-            className="lg:absolute left-0 bg-accent text-white px-6 py-3 lg:ml-[20px] hover:bg-accent/80"
+            state={{ cart }}
+            className="mt-2 lg:mt-0 bg-accent text-white px-6 py-3 rounded-lg hover:bg-accent/80"
           >
             Proceed to Checkout
           </Link>
-          <div className="h-[50px] flex items-center">
-            <span className="font-semibold text-accent text-2xl lg:text-right lg:pr-[10px]">
-              Total: LKR {getTotal().toFixed(2)}
-            </span>
-          </div>
         </div>
 
       </div>
