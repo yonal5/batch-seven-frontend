@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CiCircleChevDown, CiCircleChevUp } from "react-icons/ci";
 import { BiTrash } from "react-icons/bi";
 
@@ -7,23 +7,31 @@ import { addToCart, getTotal, loadCart } from "../utils/cart";
 
 export default function CartPage() {
   const [cart, setCart] = useState([]);
+  const navigate = useNavigate();
 
-  // Load cart on mount
+  // Load cart when component mounts
   useEffect(() => {
     setCart(loadCart());
   }, []);
 
-  // Helpers
+  // Increase/decrease quantity
   const updateCart = (item, qty) => {
     addToCart(item, qty);
     setCart(loadCart());
   };
 
+  // Remove item completely
   const removeItem = (item) => updateCart(item, -item.quantity);
+
+  // Handle Checkout button click
+  const handleCheckout = () => {
+    if (cart.length === 0) return; // Prevent empty cart checkout
+    navigate("/checkout", { state: { cart } });
+  };
 
   if (cart.length === 0)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-primary text-white text-center">
+      <div className="min-h-screen flex items-center justify-center bg-primary text-white text-center p-4">
         <div>
           <h1 className="text-2xl font-bold">🛒 Your cart is empty</h1>
           <p className="mt-2">Add some products to checkout</p>
@@ -45,7 +53,7 @@ export default function CartPage() {
         {cart.map((item, index) => (
           <div
             key={index}
-            className="w-full bg-white flex flex-col lg:flex-row relative items-center p-3 rounded-lg shadow-md"
+            className="w-full bg-white flex flex-col lg:flex-row items-center p-3 rounded-lg shadow-md relative"
           >
             {/* Remove Button */}
             <button
@@ -63,7 +71,7 @@ export default function CartPage() {
             />
 
             {/* Info */}
-            <div className="flex-1 flex flex-col justify-center ml-4">
+            <div className="flex-1 flex flex-col justify-center ml-4 text-left">
               <h1 className="font-semibold text-lg">{item.name}</h1>
               <span className="text-sm text-secondary">{item.productID}</span>
             </div>
@@ -101,15 +109,13 @@ export default function CartPage() {
             Total: LKR {getTotal().toFixed(2)}
           </span>
 
-          <Link
-            to="/checkout"
-            state={{ cart }}
+          <button
+            onClick={handleCheckout}
             className="mt-2 lg:mt-0 bg-accent text-white px-6 py-3 rounded-lg hover:bg-accent/80"
           >
             Proceed to Checkout
-          </Link>
+          </button>
         </div>
-
       </div>
     </div>
   );
