@@ -1,51 +1,36 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function OrderPage() {
+export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Get token from localStorage (after login)
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please login to view your orders.");
+      setLoading(false);
+      return;
+    }
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/orders", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axios.get(
+          import.meta.env.VITE_API_URL + "/orders",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setOrders(res.data);
-        setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || "Error fetching orders");
+      } finally {
         setLoading(false);
       }
     };
-
     fetchOrders();
-  }, [token]);
-
-  const updateStatus = async (orderID, status) => {
-    try {
-      await axios.put(
-        `http://localhost:5000/api/orders/status/${orderID}`,
-        { status },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setOrders((prev) =>
-        prev.map((order) =>
-          order.orderID === orderID ? { ...order, status } : order
-        )
-      );
-    } catch (err) {
-      alert(err.response?.data?.message || "Failed to update status");
-    }
-  };
+  }, []);
 
   if (loading) return <p>Loading orders...</p>;
   if (error) return <p>{error}</p>;
@@ -64,7 +49,6 @@ export default function OrderPage() {
               <th className="border p-2">Items</th>
               <th className="border p-2">Total</th>
               <th className="border p-2">Status</th>
-              <th className="border p-2">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -81,19 +65,6 @@ export default function OrderPage() {
                 </td>
                 <td className="border p-2">{order.total}</td>
                 <td className="border p-2">{order.status}</td>
-                <td className="border p-2">
-                  {["Pending", "Shipped", "Delivered", "Cancelled"].map(
-                    (status) => (
-                      <button
-                        key={status}
-                        onClick={() => updateStatus(order.orderID, status)}
-                        className="mr-2 px-2 py-1 bg-blue-500 text-white rounded"
-                      >
-                        {status}
-                      </button>
-                    )
-                  )}
-                </td>
               </tr>
             ))}
           </tbody>
