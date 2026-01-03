@@ -1,6 +1,7 @@
 
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { Loader } from "../../components/loader";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -32,44 +33,58 @@ export default function OrdersPage() {
     fetchOrders();
   }, []);
 
-  if (loading) return <p>Loading orders...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <div className="flex justify-center items-center min-h-[40vh]"><Loader /></div>;
+  if (error) return <div className="text-center text-red-500 font-semibold mt-8">{error}</div>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Orders</h1>
+    <main className="main-content">
+      <h1 className="text-3xl font-extrabold mb-8 text-accent drop-shadow">Your Orders</h1>
       {orders.length === 0 ? (
-        <p>No orders found</p>
+        <div className="text-center text-secondary/60 text-lg py-12 card">No orders found</div>
       ) : (
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border p-2">Order ID</th>
-              <th className="border p-2">Customer</th>
-              <th className="border p-2">Items</th>
-              <th className="border p-2">Total</th>
-              <th className="border p-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.orderID}>
-                <td className="border p-2">{order.orderID}</td>
-                <td className="border p-2">{order.customerName || order.email}</td>
-                <td className="border p-2">
-                  {order.items.map((item, idx) => (
-                    <div key={idx}>
-                      {item.name} x {item.quantity}
-                    </div>
-                  ))}
-                </td>
-                <td className="border p-2">{order.total}</td>
-                <td className="border p-2">{order.status}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse card">
+            <thead>
+              <tr className="bg-accent/90 text-white">
+                <th className="p-3 font-semibold">Order ID</th>
+                <th className="p-3 font-semibold">Customer</th>
+                <th className="p-3 font-semibold">Items</th>
+                <th className="p-3 font-semibold">Total</th>
+                <th className="p-3 font-semibold">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.orderID} className="odd:bg-primary even:bg-white hover:bg-accent/10 transition-colors">
+                  <td className="p-3 font-mono text-secondary/80">{order.orderID}</td>
+                  <td className="p-3">{order.customerName || order.email}</td>
+                  <td className="p-3">
+                    {order.items.map((item, idx) => (
+                      <div key={idx} className="text-sm">
+                        <span className="font-semibold text-secondary">{item.name}</span> <span className="text-secondary/60">x {item.quantity}</span>
+                      </div>
+                    ))}
+                  </td>
+                  <td className="p-3 font-semibold text-accent">${order.total?.toFixed(2)}</td>
+                  <td className="p-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      order.status === "Pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : order.status === "Shipped"
+                        ? "bg-blue-100 text-blue-700"
+                        : order.status === "Delivered"
+                        ? "bg-green-100 text-green-700"
+                        : order.status === "Cancelled"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}>{order.status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
-    </div>
+    </main>
   );
 }
