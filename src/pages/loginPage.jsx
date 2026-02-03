@@ -64,29 +64,30 @@ export default function LoginPage() {
 					<div className="flex items-center gap-4">
 						<img
 							src="/logo.png"
-							alt="CBC - Crystal Beauty Clear"
+							alt="Alipres"
 							className="h-10 w-auto"
 						/>
 						<span className="text-primary/90 tracking-wide font-semibold">
-							CBC • Crystal Beauty Clear
+							Alipres
 						</span>
 					</div>
 
 					<div className="flex-1 flex items-center">
 						<div className="max-w-xl space-y-6">
 							<h1 className="text-5xl font-bold leading-tight text-white drop-shadow">
-								Glow on. <span className="text-accent">Shop on.</span>
+								Best in. <span className="text-accent">ONE Plase.</span>
 							</h1>
 							<p className="text-primary/90 text-lg">
 								Sign in to explore exclusive offers, track your orders, and save
-								your favorite beauty picks. Beautiful shopping—made simple.
+								your Gaming Race. best place to start you Journy.
+
 							</p>
 							<div className="h-1 w-28 bg-accent rounded-full" />
 						</div>
 					</div>
 
 					<p className="text-primary/80 text-sm">
-						© {new Date().getFullYear()} CBC – Crystal Beauty Clear. All rights
+						© {new Date().getFullYear()} Alipres – Best Computer & Gaming Store. All rights
 						reserved.
 					</p>
 				</div>
@@ -98,14 +99,14 @@ export default function LoginPage() {
 							<div className="mb-8 flex flex-col items-center text-center">
 								<img
 									src="/logo.png"
-									alt="CBC Logo"
+									alt="Alipres Logo"
 									className="h-12 w-auto mb-4"
 								/>
 								<h2 className="text-2xl font-semibold text-white">
-									Welcome back to CBC
+									Welcome back to Alipres
 								</h2>
 								<p className="text-primary/90 text-sm">
-									Log in to continue your beauty journey and checkout faster.
+									Log in to continue your Gaming Race journey and checkout faster.
 								</p>
 							</div>
 
@@ -176,7 +177,7 @@ export default function LoginPage() {
 							</div>
 
 							<div className="mt-6 text-center text-sm text-primary/90">
-								New to CBC?{" "}
+								New to Alipres?{" "}
 								<Link
 									to="/register"
 									className="text-accent hover:underline underline-offset-4"
@@ -188,7 +189,7 @@ export default function LoginPage() {
 
 						{/* Small footer for mobile */}
 						<p className="mt-6 text-center text-primary/80 text-xs lg:hidden">
-							© {new Date().getFullYear()} CBC – Crystal Beauty Clear
+							© {new Date().getFullYear()} Alipres – Best Computer & Gaming Store
 						</p>
 					</div>
 				</div>

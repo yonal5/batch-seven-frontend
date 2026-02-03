@@ -23,7 +23,7 @@ export default function AdminOrdersPage() {
                 return;
             }
 			axios
-			.get(import.meta.env.VITE_API_URL + "/api/orders",{
+			.get(import.meta.env.VITE_API_URL + "/orders",{
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -121,7 +121,7 @@ export default function AdminOrdersPage() {
 												{item.address}
 											</td>
 											<td className="px-4 py-3">
-												{`LKR ${item.total.toFixed(2)}`}
+												{`USD ${item.total.toFixed(2)}`}
 											</td>
                                             <td className="px-4 py-3 text-center">
                                                 {item.status}

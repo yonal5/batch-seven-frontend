@@ -12,11 +12,13 @@ export default function AddProductPage() {
 	const [images, setImages] = useState([]);
 	const [price, setPrice] = useState(0);
 	const [labelledPrice, setLabelledPrice] = useState(0);
-	const [category, setCategory] = useState("cream");
+	const [category, setCategory] = useState("Website blue");
 	const [stock, setStock] = useState(0);
 	const navigate = useNavigate();
 
+	console.log(category);
 	async function addProduct() {
+
 		const token = localStorage.getItem("token");
 		if (token == null) {
 			navigate("/login");
@@ -44,17 +46,18 @@ export default function AddProductPage() {
 				stock : stock
 			}
 
-			await axios.post(import.meta.env.VITE_API_URL+"/api/products",product,{
-				headers:{
-					Authorization : "Bearer "+token
-				}
-			})
+				await axios.post(import.meta.env.VITE_API_URL+"/api/products",product,{
+					headers:{
+						Authorization : "Bearer "+token
+					}
+				})
 			toast.success("Product added successfully");
 			navigate("/admin/products");
 
-		} catch {
-			toast.error("An error occurred");
-		}
+		}catch (err) {
+   		 	//console.error("Add product error:", err.response || err.message);
+    		toast.error("An error occurred: " + (err.response?.data?.message || err.message));
+  }
 
 	}
 
@@ -188,15 +191,21 @@ export default function AddProductPage() {
 							</span>
 							<select
 								value={category}
-								onChange={(e) => {
+								onChange={(e) => { 
 									setCategory(e.target.value);
 								}}
 								className="h-11 rounded-xl border border-secondary/20 bg-white px-3 text-secondary outline-none focus:border-accent focus:ring-4 focus:ring-accent/20 transition"
 							>
-								<option value="cream">Cream</option>
-								<option value="lotion">Lotion</option>
-								<option value="serum">Serum</option>
-							</select>
+								<option value="Website blue">Website Blue</option>
+								<option value="Website green">Website Green</option>
+								<option value="Website red">Website Red</option>
+								<option value="Website yellow">Website Yellow</option>
+								<option value="Website perple">Website Perple</option>
+								<option value="Website orenge">Website Orenge</option>
+								<option value="Website black">Website Black</option>
+								<option value="Website blue">Website Blue</option>
+
+						</select>
 						</label>
 
 						{/* Stock */}
